@@ -1,0 +1,47 @@
+section .data
+
+message db 'Hello, world!', 0x0a
+
+k dd 0
+
+section .text
+
+global _start
+
+mov eax, 0x1
+
+xb:
+; BELOW DEFAULT SYSTEM PRINT CALL ROUTINE
+mov eax, 4 ; system call number for write
+mov ebx, 1 ; file descriptor for stdout
+mov ecx, k; address of string to write
+mov edx, 13 ; length of string
+int 0x80 ; call kernel
+jmp quit
+
+quit:
+mov eax, 1 ; system call number for exit
+mov ebx, 0 ; exit code
+int 0x80 ; call kernel
+
+
+_start:
+
+; GET VALUE FROM MEMORY K AND STORE AT REG
+mov eax, [k]
+; ADD CERTAIN AMOUNT TO REGISTER
+add eax, 0x99
+
+; RETURN THE REGISTER TO MEMORY
+mov [k], eax
+; SET REGISTER EBX TO COMPARATION VALUE 
+; EBX WILL BE for i < ebx
+mov ebx, 100
+
+; COMPARATION TO K AND EBX
+cmp eax, ebx
+; JUMP TO PRINT ROUTINE
+jle xb
+
+cmp eax, ebx
+jmp _start
